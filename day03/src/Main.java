@@ -13,8 +13,9 @@ public class Main {
         String input = new String(Files.readAllBytes(Paths.get(FILENAME)));
 
         System.out.println(solve1(input));
+        visits.clear();
+        System.out.println(solve2(input));
     }
-
     private static int solve1(String input) {
         int currentX = 0;
         int currentY = 0;
@@ -22,7 +23,6 @@ public class Main {
 
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-            // TODO: start here, case statement change x,y, then update or insert into map.
             switch (c) {
                 case '^':
                     currentY += 1;
@@ -40,6 +40,58 @@ public class Main {
                     throw new RuntimeException("Unexpected character: " + c);
             }
             visit(currentX, currentY);
+        }
+        return visits.size();
+    }
+
+    private static int solve2(String input) {
+        int currentX = 0;
+        int currentY = 0;
+        int secondX = 0;
+        int secondY = 0;
+        boolean isFirst = true;
+        visit(currentX, currentY);
+
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            switch (c) {
+                case '^':
+                    if(isFirst) {
+                        currentY += 1;
+                    } else {
+                        secondY += 1;
+                    }
+                    break;
+                case '>':
+                    if(isFirst) {
+                        currentX += 1;
+                    } else {
+                        secondX += 1;
+                    }
+                    break;
+                case 'v':
+                    if(isFirst) {
+                        currentY -= 1;
+                    } else {
+                        secondY -= 1;
+                    }
+                    break;
+                case '<':
+                    if(isFirst) {
+                        currentX -= 1;
+                    } else {
+                        secondX -= 1;
+                    }
+                    break;
+                default:
+                    throw new RuntimeException("Unexpected character: " + c);
+            }
+            if(isFirst) {
+                visit(currentX, currentY);
+            } else {
+                visit(secondX, secondY);
+            }
+            isFirst = !isFirst;
         }
         return visits.size();
     }
